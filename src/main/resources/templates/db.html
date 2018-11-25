@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>u-tools DB工具</title>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Cache" content="no-cache">
+
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/zTreeStyle/zTreeStyle.css" media="all">
+    <!--<link rel="stylesheet" href="/css/main.css">-->
+    <link href="/static//codemirror/lib/codemirror.css" rel="stylesheet" type="text/css">
+    <link href="/static//codemirror/theme/monokai.css" rel="stylesheet" type="text/css">
+    <link href="/static//codemirror/addon/display/fullscreen.css" rel="stylesheet" type="text/css">
+    <link href="/static//codemirror/addon/hint/show-hint.css" rel="stylesheet" type="text/css"/>
+
+    <link href="/static/toastr/toastr.min.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .layui-table-view {
+            margin: 0px
+        }
+    </style>
+</head>
+<body>
+<div class="layui-tab">
+    <ul class="layui-tab-title" style="margin: 0 20px">
+        <li class="layui-this">DB工具</li>
+        <li>格式化工具</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <form class="layui-form" action="javascript:void(0)">
+                <div class="layui-container" style="width: 100%" id="db-form">
+                    <div class="layui-row">
+                        <div class="layui-col-md12">
+
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="padding-left: 0px; padding-right: 10px">DB类型</label>
+                                    <div class="layui-input-inline">
+                                        <select v-model="serverType">
+                                            <option value="MySQL">MySQL</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="padding-left: 0px; padding-right: 10px">Host</label>
+                                    <div class="layui-input-inline">
+                                        <!--<select name="modules" lay-verify="required" lay-search="">-->
+                                        <!--<option value="">直接选择或搜索选择</option>-->
+                                        <!--</select>-->
+                                        <div class="layui-input-inline">
+                                            <input type="text" v-model="host" required lay-verify="required" placeholder="127.0.0.1"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="padding-left: 0px; padding-right: 10px">port</label>
+                                    <div class="layui-input-inline">
+                                        <div class="layui-input-inline">
+                                            <input type="number" v-model="port" required lay-verify="required" placeholder="3306"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="padding-left: 0px; padding-right: 10px">用户名</label>
+                                    <div class="layui-input-inline">
+                                        <div class="layui-input-inline">
+                                            <input type="text" v-model="username" required lay-verify="required" placeholder="root"
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <label class="layui-form-label" style="padding-left: 0px; padding-right: 10px">密码</label>
+                                    <div class="layui-input-inline">
+                                        <div class="layui-input-inline">
+                                            <input type="password" v-model="password" required lay-verify="required" placeholder=""
+                                                   autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-inline">
+                                    <button class="layui-btn" onClick="connectServer()" style="padding: 0 10px;">连接服务器</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row">
+                        <div class="layui-col-md6">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">选择数据库</label>
+                                <div class="layui-input-block">
+                                    <select v-model="dbName" name="dbName" lay-filter="dbNameFilter">
+                                        <option value='' disabled selected style='display:none;'>选择数据库</option>
+                                        <option v-for="name in dbNameList" :value="name">{{name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-col-md6"></div>
+                    </div>
+                </div>
+            </form>
+            <div class="layui-container" style="width: 100%" id="sql-console">
+                <div class="layui-row layui-col-space10">
+                    <div class="layui-col-md2"
+                         style="min-height: 937px; border: #8D8D8D 1px solid; overflow-x: auto; overflow-y: auto; max-height: 1000px">
+                        <blockquote class="layui-elem-quote" style="padding: 5px; border-left: 0px">
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 0px">全部生成</a>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 0px">生成DO</a>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 0px">生成DAO</a>
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 0px">生成TEST</a>
+                        </blockquote>
+                        <div class="zTreeDemoBackground left">
+                            <ul id="tableTree" class="ztree"></ul>
+                        </div>
+                    </div>
+                    <div class="layui-col-md10" style="height: 937px; overflow-y: scroll; border: #8D8D8D 1px solid;">
+                        <blockquote class="layui-elem-quote" style="margin-bottom: 0px; padding: 5px; border-left: 0px">
+                            <a class="layui-btn layui-btn-xs layui-btn-danger" href="javascript:void(0)" onclick="exeSql()">
+                                执行
+                                <i class="layui-icon layui-icon-triangle-r"></i>
+                            </a>
+                        </blockquote>
+                        <!--<textarea name="code" id="code" placeholder="请输入内容" class="layui-textarea code" ></textarea>-->
+                        <textarea id="code" name="code">SELECT * FROM</textarea>
+
+                        <blockquote class="layui-elem-quote" style="padding: 5px; border-left: 0px"
+                                    :style="{color: success? 'green': 'red' }">
+                            {{message}}
+                        </blockquote>
+                        <!--<div style="width: 100%; overflow-x: scroll">-->
+                        <!--</div>-->
+                        <div class="layui-tab layui-tab-card">
+                            <ul class="layui-tab-title">
+                                <li class="layui-this">执行结果</li>
+                                <li>执行历史</li>
+                            </ul>
+                            <div class="layui-tab-content" style="padding: 0px; min-height: 460px;">
+                                <div class="layui-tab-item layui-show" style="overflow-y: scroll; overflow-x: auto">
+                                    <table class="layui-hide layui-table" id="db-result" lay-filter="db-result"></table>
+                                </div>
+                                <div class="layui-tab-item">2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script src="/static/layui/layui.js"></script>
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/js/vue.min.js"></script>
+<script src="/static/js/jquery.ztree.all.min.js"></script>
+
+
+<script src="/static/codemirror/lib/codemirror.js"></script>
+<script src="/static/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="/static/codemirror/mode/sql/sql.js"></script>
+<script src="/static/codemirror/addon/hint/show-hint.js"></script>
+<script src="/static/codemirror/addon/hint/sql-hint.js"></script>
+
+<script src="/static/toastr/toastr.min.js"></script>
+
+<script src="/static/js/db/dbTools.js"></script>
