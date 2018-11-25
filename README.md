@@ -26,3 +26,4 @@
 - 页面操作时，在合适的位置显示执行的sql语句，sql执行历史保存
 - 光标在某一行时 执行该行sql
 - 保存系统配置（host port username password等）
+- select语句默认加limit限制
