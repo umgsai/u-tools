@@ -200,33 +200,6 @@ function getTableNameList(dbName) {
     });
 }
 
-var dbForm = new Vue({
-    el: '#db-form',
-    data: {
-        serverType: "MySQL",
-        host: "localhost",
-        port: "3306",
-        username: "root",
-        password: "123456",
-        dbName: "",
-        dbNameList: []
-    }, watch: {
-        dbNameList(newValue, oldValue) {
-            if (!newValue || newValue.length == 0) {
-                return;
-            }
-            this.dbName = newValue[0];
-        },
-        dbName(newValue, oldValue) {
-            if (!newValue || newValue == "") {
-                return;
-            }
-            getTableNameList(newValue);
-        }
-    },
-    methods: {}
-});
-
 function exeSql() {
     // let sql = getSelectText();
     let sql = editor.getSelection();
@@ -317,6 +290,33 @@ function exeSql() {
 
 }
 
+var dbForm = new Vue({
+    el: '#db-form',
+    data: {
+        serverType: "MySQL",
+        host: "localhost",
+        port: "3306",
+        username: "root",
+        password: "123456",
+        dbName: "",
+        dbNameList: []
+    }, watch: {
+        dbNameList(newValue, oldValue) {
+            if (!newValue || newValue.length == 0) {
+                return;
+            }
+            this.dbName = newValue[0];
+        },
+        dbName(newValue, oldValue) {
+            if (!newValue || newValue == "") {
+                return;
+            }
+            getTableNameList(newValue);
+        }
+    },
+    methods: {}
+});
+
 var dbConsole = new Vue({
     el: '#sql-console',
     data: {
@@ -340,7 +340,16 @@ layui.use(['element', 'form', 'layer', 'table'], function () {
             return;
         }
         dbForm._data.dbName = data.value;
+    });
 
+    form.on('select(serverTypeFilter)', function (data) {
+        console.log(data.elem); //得到select原始DOM对象
+        console.log(data.value); //得到被选中的值
+        console.log(data.othis); //得到美化后的DOM对象
+        if (data.value == "") {
+            return;
+        }
+        dbForm._data.serverType = data.value;
     });
 
     table.on('edit(db-result)', function (obj) {

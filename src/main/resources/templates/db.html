@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>u-tools DB工具</title>
@@ -41,8 +41,10 @@
                                 <div class="layui-inline">
                                     <label class="layui-form-label" style="padding-left: 0px; padding-right: 10px">DB类型</label>
                                     <div class="layui-input-inline">
-                                        <select v-model="serverType">
-                                            <option value="MySQL">MySQL</option>
+                                        <select v-model="serverType"  lay-filter="serverTypeFilter">
+                                            <!--<option value="MySQL">MySQL</option>-->
+                                            <option th:each="serverType,serverTypeStat:${serverTypeList}" th:value="${serverType}"
+                                                    th:text="${serverType}"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -163,7 +165,6 @@
 <script src="/static/js/jquery-3.3.1.min.js"></script>
 <script src="/static/js/vue.min.js"></script>
 <script src="/static/js/jquery.ztree.all.min.js"></script>
-
 
 <script src="/static/codemirror/lib/codemirror.js"></script>
 <script src="/static/codemirror/addon/edit/matchbrackets.js"></script>
