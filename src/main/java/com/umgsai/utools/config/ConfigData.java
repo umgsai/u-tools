@@ -4,12 +4,14 @@
  */
 package com.umgsai.utools.config;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  *
@@ -23,7 +25,8 @@ public class ConfigData {
 
     public static final String tablePreFix = "";
 
-    public static Map<String, String> dataTypeMap = Maps.newHashMap();
+    public static final Map<String, String> dataTypeMap = Maps.newHashMap();
+    public static final Map<String, Object> configMap = Maps.newHashMap();
 
     static {
         dataTypeMap.put("bigint", "long");
@@ -43,19 +46,21 @@ public class ConfigData {
         dataTypeMap.put("decimal", "double");
         dataTypeMap.put("float", "float");
 
-        System.out.println(dataTypeMap);
-
         Properties properties = new Properties();
         // 使用ClassLoader加载properties配置文件生成对应的输入流
         InputStream in = ConfigData.class.getClassLoader().getResourceAsStream("application.properties");
         // 使用properties对象加载输入流
         try {
             properties.load(in);
-            String port = properties.getProperty("server.port");
-            log.info("port=" + port);
+            Set<Object> keys = properties.keySet();
+            for (Object key : keys) {
+                configMap.put(key.toString(), properties.get(key));
+            }
+            if (log.isInfoEnabled()) {
+                log.info(String.format("configMap=%s", JSON.toJSONString(configMap)));
+            }
         } catch (Exception e) {
             log.error("Exception", e);
         }
-        //获取key对应的value值
     }
 }
