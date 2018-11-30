@@ -27,3 +27,4 @@
 - 光标在某一行时 执行该行sql
 - 保存系统配置（host port username password等）
 - select语句默认加limit限制
+- https://ace.c9.io/ 代码格式化参考
