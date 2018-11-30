@@ -24,7 +24,7 @@
         }
     </style>
 </head>
-<body>
+<body style="margin-bottom: 10px">
 <div class="layui-tab">
     <ul class="layui-tab-title" style="margin: 0 20px">
         <li class="layui-this">DB工具</li>
@@ -112,7 +112,7 @@
             <div class="layui-container" style="width: 100%" id="sql-console">
                 <div class="layui-row layui-col-space10">
                     <div class="layui-col-md2"
-                         style="min-height: 937px; border: #8D8D8D 1px solid; overflow-x: auto; overflow-y: auto; max-height: 1000px">
+                         style="height: 937px; border: #8D8D8D 1px solid; overflow-x: auto; overflow-y: auto; max-height: 1000px">
                         <blockquote class="layui-elem-quote" style="padding: 5px; border-left: 0px">
                             <a class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 0px">全部生成</a>
                             <a class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 0px">生成DO</a>
@@ -137,12 +137,39 @@
                                     :style="{color: success? 'green': 'red' }">
                             {{message}}
                         </blockquote>
-                        <!--<div style="width: 100%; overflow-x: scroll">-->
-                        <!--</div>-->
+                        <ul class="layui-nav">
+                            <li class="layui-nav-item layui-this" style="line-height: 40px"><a href="javacript:void(0)">执行结果</a></li>
+                            <li class="layui-nav-item" style="line-height: 40px"><a href="javacript:void(0)">执行历史</a></li>
+                            <li class="layui-nav-item" style="line-height: 40px">
+                                <a href="javascript:;">导出数据</a>
+                                <dl class="layui-nav-child" style="top: 45px">
+                                    <dd><a href="javacript:void(0)">导出JSON</a></dd>
+                                    <dd><a href="javacript:void(0)">导出insert语句</a></dd>
+                                    <dd><a href="javacript:void(0)">导出Java类</a></dd>
+                                </dl>
+                            </li>
+                        </ul>
+                        <div class="layui-tab-item layui-show" style="overflow-y: scroll; overflow-x: auto">
+                            <table class="layui-table" id="db-result" lay-filter="db-result" style="height: 510px; margin: 0px">
+                                <tr v-if="executeResultList.length <= 0">
+                                    <td>无数据...</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="layui-tab-item">2</div>
+                        <!--
                         <div class="layui-tab layui-tab-card">
                             <ul class="layui-tab-title">
                                 <li class="layui-this">执行结果</li>
                                 <li>执行历史</li>
+                                <li class="layui-nav-item" style="line-height: 40px">
+                                    <a href="javascript:;">产品</a>
+                                    <dl class="layui-nav-child">
+                                        <dd><a href="">选项1</a></dd>
+                                        <dd><a href="">选项2</a></dd>
+                                        <dd><a href="">选项3</a></dd>
+                                    </dl>
+                                </li>
                             </ul>
                             <div class="layui-tab-content" style="padding: 0px; min-height: 460px;">
                                 <div class="layui-tab-item layui-show" style="overflow-y: scroll; overflow-x: auto">
@@ -151,6 +178,7 @@
                                 <div class="layui-tab-item">2</div>
                             </div>
                         </div>
+                        -->
                     </div>
                 </div>
 

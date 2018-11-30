@@ -241,6 +241,7 @@ function exeSql() {
                 console.log(columnNameList);
                 console.log(dataList);
                 let cols = [];
+                cols.push({type: 'checkbox', fixed: 'left'});
                 for (let i = 0; i < columnNameList.length; i++) {
                     let colMember = {
                         field: columnNameList[i],
@@ -281,6 +282,7 @@ function exeSql() {
                 };
                 tableSettings.cols.push(cols);
                 tableSettings.data = tableDataList;
+                dbConsole._data.executeResultList = tableDataList;
                 layui.table.render(tableSettings);
                 return;
             }
@@ -322,7 +324,8 @@ var dbConsole = new Vue({
     data: {
         sqlType: "DQL",
         success: true,
-        message: "请连接服务器后使用"
+        message: "请连接服务器后使用",
+        executeResultList: []
     },
     methods: {}
 });
