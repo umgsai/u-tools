@@ -330,6 +330,28 @@ var dbConsole = new Vue({
     methods: {}
 });
 
+function exportCheckDataToJson() {
+    let checkStatus = layui.table.checkStatus('db-result');
+    if (checkStatus.data.length <= 0) {
+        toastr.info("请选中要导出的数据");
+        return;
+    }
+    console.log(checkStatus);
+    let data = checkStatus.data;
+    console.log(encodeURI(JSON.stringify(data)));
+    layui.layer.jsonData = data;
+    layui.layer.open({
+        type: 2,
+        area: ['900px', '550px'],
+        fixed: false, //不固定
+        // maxmin: true,
+        scrollbar: false,
+        shadeClose: true,
+        title: "",
+        content: '/format/json.html'
+    });
+}
+
 layui.use(['element', 'form', 'layer', 'table'], function () {
     var element = layui.element;
     var form = layui.form;
@@ -361,6 +383,24 @@ layui.use(['element', 'form', 'layer', 'table'], function () {
             , field = obj.field; //得到字段
         toastr.info('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value);
     });
+
+    // table.on('toolbar(db-result)', function (obj) {
+    //     var checkStatus = table.checkStatus(obj.config.id);
+    //     switch (obj.event) {
+    //         case 'exportCheckDataToJson':
+    //             var data = checkStatus.data;
+    //             layer.alert(JSON.stringify(data));
+    //             break;
+    //         case 'getCheckLength':
+    //             var data = checkStatus.data;
+    //             layer.msg('选中了：' + data.length + ' 个');
+    //             break;
+    //         case 'isAll':
+    //             layer.msg(checkStatus.isAll ? '全选' : '未全选');
+    //             break;
+    //     }
+    //     ;
+    // });
 
     window.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         // mode: mime,

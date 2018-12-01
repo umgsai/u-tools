@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <link href="/static/toastr/toastr.min.css" rel="stylesheet" type="text/css"/>
+
+    <!--<link href="/static/jsonview/jquery.json-viewer.css" rel="stylesheet" type="text/css">-->
+    <link href="/static/jsonview/jquery.jsonview.min.css" rel="stylesheet" type="text/css">
+    <style>
+        .jsonview .null {
+            color: red;
+        }
+
+        .jsonview .bool {
+            color: #fde3a7;
+        }
+
+        .jsonview .num {
+            color: #bf55ec;
+        }
+
+        .jsonview .string {
+            color: #00b16a;
+            white-space: pre-wrap;
+        }
+
+        .jsonview .q {
+            color: black;
+            width: 10px;
+        }
+
+        .jsonview .prop {
+            cursor: text;
+        }
+    </style>
+</head>
+<body>
+<blockquote class="layui-elem-quote" style="padding: 5px; border-left: 0px;">
+    <a class="layui-btn layui-btn-xs layui-btn-danger btn-copy" style="margin-left: 0px;">复制</a>
+    <a id="collapse-btn" class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 0px;">折叠</a>
+    <a id="expand-btn" class="layui-btn layui-btn-xs layui-btn-danger" style="margin-left: 0px;">展开</a>
+</blockquote>
+<pre id="json-render" style="margin: 20px"></pre>
+<div id="json-content" style="display: none"></div>
+</body>
+</html>
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/layui/layui.js"></script>
+<script type="text/javascript" src="/static/js/clipboard.min.js"></script>
+<script type="text/javascript" src="/static/toastr/toastr.min.js"></script>
+<!--<script src="/static/jsonview/jquery.json-viewer.js"></script>-->
+<script src="/static/jsonview/jquery.jsonview.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        let input = {};
+        try {
+            input = JSON.stringify(parent.layer.jsonData);
+            input = eval('(' + input + ')');
+            // input = parent.layer.jsonData;
+        }
+        catch (error) {
+            return alert("Cannot eval JSON: " + error);
+        }
+        jQuery("#json-content").text(JSON.stringify(input, null, 4));
+        let options = {
+            collapsed: false,
+            withQuotes: true
+        };
+
+        // $('#json-renderer').jsonViewer(input, options);
+        // $("#json-render").JSONView(input);
+
+
+        $("#json-render").JSONView(input, {
+            collapsed: false,
+            escape: false,
+            nl2br: true,
+            recursive_collapser: true
+        });
+
+        $('#collapse-btn').on('click', function () {
+            $("#json-render").JSONView(input, {
+                collapsed: true,
+                nl2br: true,
+                recursive_collapser: true
+            });
+
+
+        });
+
+        $('#expand-btn').on('click', function () {
+            $("#json-render").JSONView(input, {
+                collapsed: false,
+                nl2br: true,
+                recursive_collapser: true
+            });
+
+        });
+    });
+
+    var clipboard = new Clipboard('.btn-copy', {
+        text: function () {
+            var text = jQuery("#json-content").text();
+            if (text == "") {
+                toastr.warning("没有可以复制的内容！");
+            } else {
+                toastr.success("已复制到剪切板！");
+            }
+            return text;
+        }
+    });
+</script>

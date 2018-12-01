@@ -131,7 +131,7 @@
                             </a>
                         </blockquote>
                         <!--<textarea name="code" id="code" placeholder="请输入内容" class="layui-textarea code" ></textarea>-->
-                        <textarea id="code" name="code">SELECT * FROM</textarea>
+                        <textarea id="code" name="code">SELECT * FROM zappinfo_software</textarea>
 
                         <blockquote class="layui-elem-quote" style="padding: 5px; border-left: 0px"
                                     :style="{color: success? 'green': 'red' }">
@@ -143,7 +143,7 @@
                             <li class="layui-nav-item" style="line-height: 40px">
                                 <a href="javascript:;">导出数据</a>
                                 <dl class="layui-nav-child" style="top: 45px">
-                                    <dd><a href="javacript:void(0)">导出JSON</a></dd>
+                                    <dd><a href="javacript:void(0)" onclick="exportCheckDataToJson()">导出JSON</a></dd>
                                     <dd><a href="javacript:void(0)">导出insert语句</a></dd>
                                     <dd><a href="javacript:void(0)">导出Java类</a></dd>
                                 </dl>
