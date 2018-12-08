@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>导出insert语句</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all">
+    <link href="/static/toastr/toastr.min.css" rel="stylesheet" type="text/css"/>
+
+    <link rel="stylesheet" type="text/css" href="/static/SyntaxHighlighter/styles/shCore.css">
+    <link rel="stylesheet" type="text/css" href="/static/SyntaxHighlighter/styles/shThemeDefault.css">
+</head>
+<body>
+<blockquote class="layui-elem-quote" style="padding: 5px; border-left: 0px;">
+    <a class="layui-btn layui-btn-xs layui-btn-danger btn-copy" style="margin-left: 0px;">复制</a>
+</blockquote>
+<pre name="code" id="code" class="brush: sql;toolbar:false;">
+
+</pre>
+<div id="code-copy" style="display: none"></div>
+</body>
+</html>
+<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="/static/layui/layui.js"></script>
+<script type="text/javascript" src="/static/js/clipboard.min.js"></script>
+<script type="text/javascript" src="/static/toastr/toastr.min.js"></script>
+
+<script type="text/javascript" src="/static/SyntaxHighlighter/scripts/XRegExp.js"></script>
+<script type="text/javascript" src="/static/SyntaxHighlighter/scripts/shCore.js"></script>
+<script type="text/javascript" src="/static/SyntaxHighlighter/scripts/shBrushJava.js"></script>
+<script type="text/javascript" src="/static/SyntaxHighlighter/scripts/shBrushJScript.js"></script>
+<script type="text/javascript" src="/static/SyntaxHighlighter/scripts/shBrushSql.js"></script>
+
+<script type="text/javascript">
+    let tableName = '[[${tableName}]]';
+    let data = parent.layer.jsonData;
+    if (!tableName) {
+        toastr.error("未获取到表名！");
+    }
+    if (!data || data.length == 0) {
+        toastr.error("未获取到数据！");
+    }
+    let insertSQL = "";
+    for (let i = 0; i < data.length; i++) {
+        let sql = "INSERT INTO " + tableName + " ";
+        let obj = data[i];
+        let keyList = [];
+        let valueList = [];
+        for (let key in obj) {
+            // alert(key+':'+obj[key]);
+            let value = obj[key];
+            keyList.push(key);
+            if (typeof(value) == "number") {
+                console.log(key + " number");
+            } else if (typeof(value) == "string") {
+                console.log(key + " string");
+                value = "'" + value + "'";
+            }else if (value == null) {
+                console.log(key + " null");
+                value = "null";
+            }
+            valueList.push(value);
+        }
+        sql = sql + "(" + keyList.join(", ") + ")";
+        sql = sql + " VALUES "
+        sql = sql + "(" + valueList.join(", ") + ")";
+        sql = sql + ";";
+        console.log(sql);
+        insertSQL = insertSQL + sql + "\n";
+    }
+    $("#code").text(insertSQL);
+    $("#code-copy").text(insertSQL);
+    SyntaxHighlighter.all();
+
+    var clipboard = new Clipboard('.btn-copy', {
+        text: function () {
+            var text = jQuery("#code-copy").text();
+            if (text == "") {
+                toastr.warning("没有可以复制的内容！");
+            } else {
+                toastr.success("已复制到剪切板！");
+            }
+            return text;
+        }
+    });
+</script>

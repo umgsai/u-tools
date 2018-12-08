@@ -25,14 +25,29 @@
     </style>
 </head>
 <body style="margin-bottom: 10px">
+<ul class="layui-nav">
+    <li class="layui-nav-item layui-this">
+        <a href="">DB工具</a>
+    </li>
+    <li class="layui-nav-item">
+        <a href="javascript:;">格式化工具</a>
+        <dl class="layui-nav-child">
+            <dd><a href="">JSON</a></dd>
+            <dd><a href="">XML</a></dd>
+            <dd><a href="">SQL</a></dd>
+        </dl>
+    </li>
+</ul>
+<!--
 <div class="layui-tab">
     <ul class="layui-tab-title" style="margin: 0 20px">
         <li class="layui-this">DB工具</li>
         <li>格式化工具</li>
     </ul>
     <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show">
-            <form class="layui-form" action="javascript:void(0)">
+        -->
+        <!--<div class="layui-tab-item layui-show">-->
+            <form class="layui-form" action="javascript:void(0)" style="margin-top: 10px">
                 <div class="layui-container" style="width: 100%" id="db-form">
                     <div class="layui-row">
                         <div class="layui-col-md12">
@@ -144,7 +159,7 @@
                                 <a href="javascript:;">导出数据</a>
                                 <dl class="layui-nav-child" style="top: 45px">
                                     <dd><a href="javacript:void(0)" onclick="exportCheckDataToJson()">导出JSON</a></dd>
-                                    <dd><a href="javacript:void(0)">导出insert语句</a></dd>
+                                    <dd><a href="javacript:void(0)" onclick="exportCheckDataToInsertSQL()">导出insert语句</a></dd>
                                     <dd><a href="javacript:void(0)">导出Java类</a></dd>
                                 </dl>
                             </li>
@@ -184,9 +199,11 @@
 
 
             </div>
-        </div>
+        <!--</div>-->
+<!--
     </div>
 </div>
+-->
 </body>
 </html>
 <script src="/static/layui/layui.js"></script>

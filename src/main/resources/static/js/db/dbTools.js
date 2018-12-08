@@ -238,6 +238,8 @@ function exeSql() {
             if (sqlType == "DQL") {
                 let columnNameList = dataResult.data.columnNameList;
                 let dataList = dataResult.data.data;
+                let tableName = dataResult.data.tableName;
+                dbConsole._data.tableName = tableName;
                 console.log(columnNameList);
                 console.log(dataList);
                 let cols = [];
@@ -325,10 +327,36 @@ var dbConsole = new Vue({
         sqlType: "DQL",
         success: true,
         message: "请连接服务器后使用",
-        executeResultList: []
+        executeResultList: [],
+        tableName:""//用于导出insert语句
     },
     methods: {}
 });
+
+function exportCheckDataToInsertSQL() {
+    let checkStatus = layui.table.checkStatus('db-result');
+    if (checkStatus.data.length <= 0) {
+        toastr.info("请选中要导出的数据");
+        return;
+    }
+    let tableName = dbConsole._data.tableName;
+    if (!tableName) {
+        toastr.error("暂时不支持来自多张表的数据！");
+        return;
+    }
+    let data = checkStatus.data;
+    layui.layer.jsonData = data;
+    layui.layer.open({
+        type: 2,
+        area: ['1100px', '650px'],
+        fixed: false, //不固定
+        // maxmin: true,
+        scrollbar: false,
+        shadeClose: true,
+        title: "",
+        content: '/db/exportInsert.html?tableName=' + tableName
+    });
+}
 
 function exportCheckDataToJson() {
     let checkStatus = layui.table.checkStatus('db-result');

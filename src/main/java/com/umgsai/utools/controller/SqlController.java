@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -70,7 +71,8 @@ public class SqlController {
         if (!dataResult.isSuccess()) {
             return dataResult;
         }
-        AbstractDbManager dbManager = dataResult.getData();        return dbManager.getTableNameList(dbForm.getHost(), dbForm.getPort(), dbForm.getUsername(), dbForm.getPassword(),
+        AbstractDbManager dbManager = dataResult.getData();
+        return dbManager.getTableNameList(dbForm.getHost(), dbForm.getPort(), dbForm.getUsername(), dbForm.getPassword(),
                 dbForm.getDbName());
     }
 
@@ -81,7 +83,8 @@ public class SqlController {
         if (!dataResult.isSuccess()) {
             return dataResult;
         }
-        AbstractDbManager dbManager = dataResult.getData();        return dbManager.getDbNameList(dbForm.getHost(), dbForm.getPort(), dbForm.getUsername(), dbForm.getPassword());
+        AbstractDbManager dbManager = dataResult.getData();
+        return dbManager.getDbNameList(dbForm.getHost(), dbForm.getPort(), dbForm.getUsername(), dbForm.getPassword());
     }
 
     @ResponseBody
@@ -92,8 +95,15 @@ public class SqlController {
             return dataResult;
         }
         AbstractDbManager dbManager = dataResult.getData();
-        return dbManager.executeSql(dbForm.getHost(), dbForm.getPort(), dbForm.getUsername(), dbForm.getPassword(), dbForm.getDbName(),
+        DataResult executeResult = dbManager.executeSql(dbForm.getHost(), dbForm.getPort(), dbForm.getUsername(), dbForm.getPassword(),
+                dbForm.getDbName(),
                 dbForm.getSql());
+        if (!executeResult.isSuccess()) {
+            return executeResult;
+        }
+        Map<String, Object> resultMap = (Map<String, Object>) executeResult.getData();
+        resultMap.put("", "");
+        return executeResult;
     }
 
     private DataResult<AbstractDbManager> getDbManager(ServerType serverType) {
@@ -103,5 +113,14 @@ public class SqlController {
             default:
                 return DataResult.failResult("", String.format("暂不支持的ServerType:%s", serverType.name()));
         }
+    }
+
+    @RequestMapping("/exportInsert.html")
+    public String exportInsert(Model model, String tableName) {
+        if (log.isInfoEnabled()) {
+            log.info(tableName);
+        }
+        model.addAttribute("tableName", tableName);
+        return "exportInsert";
     }
 }
