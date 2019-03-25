@@ -40,7 +40,7 @@ public abstract class AbstractDbManager {
     private SqlExecutor dmlSqlExecutor;
 
     public DataResult<List<TableColumn>> getTableColumnList(String host, int port, String username, String password,
-                                                                   String dbName, String tableName) {
+                                                            String dbName, String tableName) {
         Map<String, Object> map = Maps.newHashMap();
 
         try {
@@ -149,7 +149,7 @@ public abstract class AbstractDbManager {
     }
 
     public DataResult executeSql(String host, int port, String username, String password, String dbName,
-                                        String sql) {
+                                 String sql) {
         Map<String, Object> map = Maps.newHashMap();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
@@ -185,6 +185,7 @@ public abstract class AbstractDbManager {
                     int row = 0;
                     int column = 0;
                     resultSet.first();
+                    String tableName = "";
                     do {
                         for (int i = 0; i < columnCount; i++) {
                             Object o = resultSet.getObject(i + 1);
@@ -193,14 +194,14 @@ public abstract class AbstractDbManager {
                             } else {
                                 data[row][i] = o;
                             }
+                            tableName = metaData.getTableName(i + 1);
+                            if (log.isInfoEnabled()) {
+                                log.info(tableName);
+                            }
                         }
                         row++;
                     } while (resultSet.next());
-                    //if (log.isInfoEnabled()) {
-                    //    log.info(String.format(JSON.toJSONString(data)));
-                    //}
-                    //Map<String, Object> resultMap = Maps.newHashMap();
-
+                    resultMap.put("tableName", tableName);
                     return DataResult.successResult(resultMap, dataResult.getMessage());
                 case DML:
                     int count = (int) map.get("count");
@@ -228,7 +229,7 @@ public abstract class AbstractDbManager {
     }
 
     private DataResult<Map<String, Object>> execute(String host, int port, String username, String password, String dbName,
-                                                           String sql) {
+                                                    String sql) {
         Map<String, Object> map = Maps.newHashMap();
         DataResult dataResult = getConnection(host, port, username, password, dbName);
         if (!dataResult.isSuccess()) {

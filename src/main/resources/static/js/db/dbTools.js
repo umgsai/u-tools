@@ -200,33 +200,6 @@ function getTableNameList(dbName) {
     });
 }
 
-var dbForm = new Vue({
-    el: '#db-form',
-    data: {
-        serverType: "MySQL",
-        host: "localhost",
-        port: "3306",
-        username: "root",
-        password: "123456",
-        dbName: "",
-        dbNameList: []
-    }, watch: {
-        dbNameList(newValue, oldValue) {
-            if (!newValue || newValue.length == 0) {
-                return;
-            }
-            this.dbName = newValue[0];
-        },
-        dbName(newValue, oldValue) {
-            if (!newValue || newValue == "") {
-                return;
-            }
-            getTableNameList(newValue);
-        }
-    },
-    methods: {}
-});
-
 function exeSql() {
     // let sql = getSelectText();
     let sql = editor.getSelection();
@@ -265,9 +238,12 @@ function exeSql() {
             if (sqlType == "DQL") {
                 let columnNameList = dataResult.data.columnNameList;
                 let dataList = dataResult.data.data;
+                let tableName = dataResult.data.tableName;
+                dbConsole._data.tableName = tableName;
                 console.log(columnNameList);
                 console.log(dataList);
                 let cols = [];
+                cols.push({type: 'checkbox', fixed: 'left'});
                 for (let i = 0; i < columnNameList.length; i++) {
                     let colMember = {
                         field: columnNameList[i],
@@ -308,6 +284,7 @@ function exeSql() {
                 };
                 tableSettings.cols.push(cols);
                 tableSettings.data = tableDataList;
+                dbConsole._data.executeResultList = tableDataList;
                 layui.table.render(tableSettings);
                 return;
             }
@@ -317,15 +294,91 @@ function exeSql() {
 
 }
 
+var dbForm = new Vue({
+    el: '#db-form',
+    data: {
+        serverType: "MySQL",
+        host: "localhost",
+        port: "3306",
+        username: "root",
+        password: "123456",
+        dbName: "",
+        dbNameList: []
+    }, watch: {
+        dbNameList(newValue, oldValue) {
+            if (!newValue || newValue.length == 0) {
+                return;
+            }
+            this.dbName = newValue[0];
+        },
+        dbName(newValue, oldValue) {
+            if (!newValue || newValue == "") {
+                return;
+            }
+            getTableNameList(newValue);
+        }
+    },
+    methods: {}
+});
+
 var dbConsole = new Vue({
     el: '#sql-console',
     data: {
         sqlType: "DQL",
         success: true,
-        message: "请连接服务器后使用"
+        message: "请连接服务器后使用",
+        executeResultList: [],
+        tableName:""//用于导出insert语句
     },
     methods: {}
 });
+
+function exportCheckDataToInsertSQL() {
+    let checkStatus = layui.table.checkStatus('db-result');
+    if (checkStatus.data.length <= 0) {
+        toastr.info("请选中要导出的数据");
+        return;
+    }
+    let tableName = dbConsole._data.tableName;
+    if (!tableName) {
+        toastr.error("暂时不支持来自多张表的数据！");
+        return;
+    }
+    let data = checkStatus.data;
+    layui.layer.jsonData = data;
+    layui.layer.open({
+        type: 2,
+        area: ['1100px', '650px'],
+        fixed: false, //不固定
+        // maxmin: true,
+        scrollbar: false,
+        shadeClose: true,
+        title: "",
+        content: '/db/exportInsert.html?tableName=' + tableName
+    });
+}
+
+function exportCheckDataToJson() {
+    let checkStatus = layui.table.checkStatus('db-result');
+    if (checkStatus.data.length <= 0) {
+        toastr.info("请选中要导出的数据");
+        return;
+    }
+    console.log(checkStatus);
+    let data = checkStatus.data;
+    console.log(encodeURI(JSON.stringify(data)));
+    layui.layer.jsonData = data;
+    layui.layer.open({
+        type: 2,
+        area: ['900px', '550px'],
+        fixed: false, //不固定
+        // maxmin: true,
+        scrollbar: false,
+        shadeClose: true,
+        title: "",
+        content: '/format/json.html'
+    });
+}
 
 layui.use(['element', 'form', 'layer', 'table'], function () {
     var element = layui.element;
@@ -340,7 +393,16 @@ layui.use(['element', 'form', 'layer', 'table'], function () {
             return;
         }
         dbForm._data.dbName = data.value;
+    });
 
+    form.on('select(serverTypeFilter)', function (data) {
+        console.log(data.elem); //得到select原始DOM对象
+        console.log(data.value); //得到被选中的值
+        console.log(data.othis); //得到美化后的DOM对象
+        if (data.value == "") {
+            return;
+        }
+        dbForm._data.serverType = data.value;
     });
 
     table.on('edit(db-result)', function (obj) {
@@ -349,6 +411,24 @@ layui.use(['element', 'form', 'layer', 'table'], function () {
             , field = obj.field; //得到字段
         toastr.info('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value);
     });
+
+    // table.on('toolbar(db-result)', function (obj) {
+    //     var checkStatus = table.checkStatus(obj.config.id);
+    //     switch (obj.event) {
+    //         case 'exportCheckDataToJson':
+    //             var data = checkStatus.data;
+    //             layer.alert(JSON.stringify(data));
+    //             break;
+    //         case 'getCheckLength':
+    //             var data = checkStatus.data;
+    //             layer.msg('选中了：' + data.length + ' 个');
+    //             break;
+    //         case 'isAll':
+    //             layer.msg(checkStatus.isAll ? '全选' : '未全选');
+    //             break;
+    //     }
+    //     ;
+    // });
 
     window.editor = CodeMirror.fromTextArea(document.getElementById('code'), {
         // mode: mime,
