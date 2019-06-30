@@ -66,12 +66,14 @@
                                 <div class="layui-inline">
                                     <label class="layui-form-label" style="padding-left: 0px; padding-right: 10px">Host</label>
                                     <div class="layui-input-inline">
-                                        <!--<select name="modules" lay-verify="required" lay-search="">-->
-                                        <!--<option value="">直接选择或搜索选择</option>-->
-                                        <!--</select>-->
                                         <div class="layui-input-inline">
+                                        <!--
                                             <input type="text" v-model="host" required lay-verify="required" placeholder="127.0.0.1"
                                                    autocomplete="off" class="layui-input">
+                                        -->
+                                        <input type="text" name="HandoverCompany" id="HandoverCompany" v-model="host" class="layui-input" style="position:absolute;z-index:2;width:80%;" lay-verify="required" value="111" onkeyup="search()" autocomplete="off">
+                                        <select type="text" id="hc_select" lay-filter="hc_select" autocomplete="off" placeholder="Mysql主机Host" lay-verify="required" class="layui-select" lay-search>
+                                        </select>
                                         </div>
                                     </div>
                                 </div>
@@ -97,7 +99,7 @@
                                     <label class="layui-form-label" style="padding-left: 0px; padding-right: 10px">密码</label>
                                     <div class="layui-input-inline">
                                         <div class="layui-input-inline">
-                                            <input type="password" v-model="password" required lay-verify="required" placeholder=""
+                                            <input type="password" v-model="password" placeholder=""
                                                    autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
@@ -220,3 +222,6 @@
 <script src="/static/toastr/toastr.min.js"></script>
 
 <script src="/static/js/db/dbTools.js"></script>
+<script>
+
+</script>

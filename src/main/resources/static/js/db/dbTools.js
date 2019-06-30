@@ -1,3 +1,16 @@
+let localStorage = window.localStorage;
+// localStorage.setItem("hostMap", new Map());
+// console.log(localStorage);
+if (localStorage) {
+    let hostMap = JSON.parse(localStorage.getItem("hostMap")||'{}');
+    $("#hc_select").empty();
+    for(var key in hostMap){
+        console.log(key);
+        let dbForm = hostMap[key];
+        let host = dbForm.host;
+        $("#hc_select").append("<option value='"+host+"'>"+host+"</option>");
+    }
+}
 var treeSetting = {
     check: {
         enable: true,
@@ -155,6 +168,12 @@ function connectServer() {
                 layui.form.render('select');
             }, 200);
             toastr.success("连接服务器成功！");
+            let key = dbForm._data.host + ":" + dbForm._data.port;
+            let hostMap = JSON.parse(localStorage.getItem("hostMap")||'{}');
+            // hostMap.set(key, dbForm._data);
+            hostMap[key] = dbForm._data;
+            localStorage.setItem("hostMap", JSON.stringify(hostMap));
+            console.log(typeof localStorage.getItem("hostMap"));
         }
     });
 };
@@ -298,10 +317,10 @@ var dbForm = new Vue({
     el: '#db-form',
     data: {
         serverType: "MySQL",
-        host: "localhost",
-        port: "3306",
-        username: "root",
-        password: "123456",
+        host: "",
+        port: "",
+        username: "",
+        password: "",
         dbName: "",
         dbNameList: []
     }, watch: {
@@ -380,10 +399,82 @@ function exportCheckDataToJson() {
     });
 }
 
+function selectHost(host, port){
+    if (!host) {
+        return;
+    }
+    let hostMap = JSON.parse(localStorage.getItem("hostMap")||'{}');
+    let ports = [];
+    for(var key in hostMap){
+        console.log(key);
+        let dbFormData = hostMap[key];
+        // let host = dbForm.host;
+        if (host == dbFormData.host) {
+            // console.log(dbForm);
+            // dbForm._data = dbFormData;
+            // break;
+            ports.push(dbFormData.port);
+        }
+    }
+    if (ports.length == 0) {
+        return;
+    }
+    if (ports.length == 1) {
+        // if (port != ports[0]) {
+        //     return;
+        // }
+        let hostKey = host + ":" + ports[0];
+        // dbForm._data = hostMap[key];
+        for(var key in hostMap) {
+            console.log(key);
+            if(key == hostKey){
+                dbForm._data.dbName = hostMap[key].dbName;
+                dbForm._data.dbNameList = hostMap[key].dbNameList;
+                dbForm._data.host = hostMap[key].host;
+                dbForm._data.password = hostMap[key].password;
+                dbForm._data.port = hostMap[key].port;
+                dbForm._data.serverType = hostMap[key].serverType;
+                dbForm._data.username = hostMap[key].username;
+                break;
+            }
+        }
+        return;
+    }
+    // 一个host上有多个MySQL端口
+    toastr.info("一个host上有多个MySQL端口....待续");
+}
+
 layui.use(['element', 'form', 'layer', 'table'], function () {
     var element = layui.element;
     var form = layui.form;
     var table = layui.table;
+
+    form.on('select(hc_select)', function (data) {   //选择移交单位 赋值给input框
+        $("#HandoverCompany").val(data.value);
+        console.log("选择了：" + data.value);
+        $("#hc_select").next().find("dl").css({ "display": "none" });
+        form.render();
+
+        selectHost(data.value, dbForm._data.port);
+    });
+
+    window.search = function () {
+        var value = $("#HandoverCompany").val();
+        $("#hc_select").val(value);
+        form.render();
+        $("#hc_select").next().find("dl").css({ "display": "block" });
+        var dl = $("#hc_select").next().find("dl").children();
+        var j = -1;
+        for (var i = 0; i < dl.length; i++) {
+            if (dl[i].innerHTML.indexOf(value) <= -1) {
+                dl[i].style.display = "none";
+                j++;
+            }
+            if (j == dl.length-1) {
+                $("#hc_select").next().find("dl").css({ "display": "none" });
+            }
+        }
+    }
 
     form.on('select(dbNameFilter)', function (data) {
         console.log(data.elem); //得到select原始DOM对象
