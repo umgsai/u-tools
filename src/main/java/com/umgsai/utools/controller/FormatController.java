@@ -4,10 +4,15 @@
  */
 package com.umgsai.utools.controller;
 
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -25,5 +30,18 @@ public class FormatController {
             log.info(jsonContent);
         }
         return "jsonFormat";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/toCamelFormat", method = RequestMethod.POST)
+    public Object toCamelFormat(@RequestBody List<String> keyList) {
+        Map<String, String> keyMap = Maps.newHashMap();
+        if (keyList != null) {
+            for(String key : keyList){
+               String formatKey = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, key);
+                keyMap.put(key, formatKey);
+            }
+        }
+        return keyMap;
     }
 }

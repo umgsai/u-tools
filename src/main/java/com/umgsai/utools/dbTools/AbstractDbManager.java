@@ -195,9 +195,9 @@ public abstract class AbstractDbManager {
                                 data[row][i] = o;
                             }
                             tableName = metaData.getTableName(i + 1);
-                            if (log.isInfoEnabled()) {
-                                log.info(tableName);
-                            }
+//                            if (log.isInfoEnabled()) {
+//                                log.info(tableName);
+//                            }
                         }
                         row++;
                     } while (resultSet.next());
