@@ -444,6 +444,11 @@ function selectHost(host, port){
     toastr.info("一个host上有多个MySQL端口....待续");
 }
 
+function generateDO(){
+    let tableName = tree.getCheckedNodes()[1].name;
+    console.log(tableName);
+}
+
 layui.use(['element', 'form', 'layer', 'table'], function () {
     var element = layui.element;
     var form = layui.form;
