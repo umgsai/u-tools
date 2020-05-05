@@ -74,14 +74,14 @@ function onclickTree(event, treeId, treeNode) {
     } else {
         treeNode.open = true;
     }
-    if (treeNode.type != "table") {
+    if (treeNode.type !== "table") {
         return;
     }
     let tableName = treeNode.name;
     if (treeNode.children.length > 0) {
         let tableNodes = treeNodes[0].children;
         for (let i = 0; i < tableNodes.length; i++) {
-            if (tableNodes[i].name == tableName) {
+            if (tableNodes[i].name === tableName) {
                 tableNodes[i].open = treeNode.open;
                 tree = $.fn.zTree.init($("#tableTree"), treeSetting, treeNodes);
                 break;
@@ -106,7 +106,7 @@ function onclickTree(event, treeId, treeNode) {
                 layui.layer.alert(dataResult.message);
                 return;
             }
-            if (dataResult.data.length == 0) {
+            if (dataResult.data.length === 0) {
                 toastr.error("未查询到字段");
                 return;
             }
@@ -122,7 +122,7 @@ function onclickTree(event, treeId, treeNode) {
             }
             let tableNodes = treeNodes[0].children;
             for (let i = 0; i < tableNodes.length; i++) {
-                if (tableNodes[i].name == tableName) {
+                if (tableNodes[i].name === tableName) {
                     tableNodes[i].children = treeNode.children;
                     tableNodes[i].open = true;
                     // tree.reAsyncChildNodes(tableNodes[i], "refresh");
@@ -157,7 +157,7 @@ function connectServer() {
                 layui.layer.alert(dataResult.message);
                 return;
             }
-            if (dataResult.length == 0) {
+            if (dataResult.length === 0) {
                 toastr.error("未查询到数据库");
                 return;
             }
@@ -191,7 +191,7 @@ function getTableNameList(dbName) {
                 layui.layer.alert(dataResult.message);
                 return;
             }
-            if (dataResult.data.length == 0) {
+            if (dataResult.data.length === 0) {
                 toastr.error("未查询到表！");
                 return;
             }
@@ -249,12 +249,12 @@ function exeSql() {
                 layui.layer.alert(dataResult.message);
             }
             let sqlType = dataResult.data.sqlType;
-            if (sqlType == "DML") {
+            if (sqlType === "DML") {
                 toastr.success(dataResult.data.message);
                 dbConsole._data.message = dataResult.data.message;
                 return;
             }
-            if (sqlType == "DQL") {
+            if (sqlType === "DQL") {
                 let columnNameList = dataResult.data.columnNameList;
                 let dataList = dataResult.data.data;
                 let tableName = dataResult.data.tableName;
@@ -268,7 +268,7 @@ function exeSql() {
                         field: columnNameList[i],
                         title: columnNameList[i]
                     };
-                    if (colMember.field != "id") {
+                    if (colMember.field !== "id") {
                         colMember.edit = 'text';
                     }
                     cols.push(colMember);
@@ -317,21 +317,21 @@ var dbForm = new Vue({
     el: '#db-form',
     data: {
         serverType: "MySQL",
-        host: "",
-        port: "",
-        username: "",
+        host: "localhost",
+        port: "3306",
+        username: "root",
         password: "",
         dbName: "",
         dbNameList: []
     }, watch: {
         dbNameList(newValue, oldValue) {
-            if (!newValue || newValue.length == 0) {
+            if (!newValue || newValue.length === 0) {
                 return;
             }
             this.dbName = newValue[0];
         },
         dbName(newValue, oldValue) {
-            if (!newValue || newValue == "") {
+            if (!newValue || newValue === "") {
                 return;
             }
             getTableNameList(newValue);
@@ -409,17 +409,17 @@ function selectHost(host, port){
         console.log(key);
         let dbFormData = hostMap[key];
         // let host = dbForm.host;
-        if (host == dbFormData.host) {
+        if (host === dbFormData.host) {
             // console.log(dbForm);
             // dbForm._data = dbFormData;
             // break;
             ports.push(dbFormData.port);
         }
     }
-    if (ports.length == 0) {
+    if (ports.length === 0) {
         return;
     }
-    if (ports.length == 1) {
+    if (ports.length === 1) {
         // if (port != ports[0]) {
         //     return;
         // }
@@ -427,7 +427,7 @@ function selectHost(host, port){
         // dbForm._data = hostMap[key];
         for(var key in hostMap) {
             console.log(key);
-            if(key == hostKey){
+            if(key === hostKey){
                 dbForm._data.dbName = hostMap[key].dbName;
                 dbForm._data.dbNameList = hostMap[key].dbNameList;
                 dbForm._data.host = hostMap[key].host;
@@ -470,7 +470,7 @@ layui.use(['element', 'form', 'layer', 'table'], function () {
                 dl[i].style.display = "none";
                 j++;
             }
-            if (j == dl.length-1) {
+            if (j === dl.length-1) {
                 $("#hc_select").next().find("dl").css({ "display": "none" });
             }
         }
@@ -490,7 +490,7 @@ layui.use(['element', 'form', 'layer', 'table'], function () {
         console.log(data.elem); //得到select原始DOM对象
         console.log(data.value); //得到被选中的值
         console.log(data.othis); //得到美化后的DOM对象
-        if (data.value == "") {
+        if (data.value === "") {
             return;
         }
         dbForm._data.serverType = data.value;
@@ -552,7 +552,7 @@ layui.use(['element', 'form', 'layer', 'table'], function () {
 
     window.editor.on("keyup", function (cm, event) {
         if (!cm.state.completionActive &&
-            ((event.keyCode >= 65 && event.keyCode <= 90) || event.keyCode == 52 || event.keyCode == 219 || event.keyCode == 190 || event.keyCode == 32)) {
+            ((event.keyCode >= 65 && event.keyCode <= 90) || event.keyCode === 52 || event.keyCode === 219 || event.keyCode === 190 || event.keyCode === 32)) {
             CodeMirror.commands.autocomplete(cm, null, {completeSingle: false});
         }
     });
