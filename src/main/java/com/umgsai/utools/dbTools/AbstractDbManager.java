@@ -4,6 +4,14 @@
  */
 package com.umgsai.utools.dbTools;
 
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLIntegerExpr;
+import com.alibaba.druid.sql.ast.statement.SQLSelect;
+import com.alibaba.druid.sql.ast.statement.SQLSelectQuery;
+import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlSelectQueryBlock;
+import com.alibaba.druid.sql.dialect.mysql.parser.MySqlStatementParser;
+import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mysql.jdbc.Connection;
@@ -154,6 +162,30 @@ public abstract class AbstractDbManager {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         try {
             SqlType sqlType = SqlUtil.getSqlType(sql);
+            if (sqlType == SqlType.DQL) {
+                MySqlStatementParser parser = new MySqlStatementParser(sql);
+                List<SQLStatement> sqlStatements = parser.parseStatementList();
+                StringBuilder stringBuilder = new StringBuilder();
+                MySqlOutputVisitor mySqlOutputVisitor = new MySqlOutputVisitor(stringBuilder);
+                for (SQLStatement stmt : sqlStatements) {
+                    stmt.accept(mySqlOutputVisitor);
+//                    System.out.println(out + ";");
+//                    out.setLength(0);
+
+                    SQLSelect select = ((SQLSelectStatement) stmt).getSelect();
+                    SQLSelectQuery query = select.getQuery();
+                    MySqlSelectQueryBlock mySqlSelectQueryBlock = (MySqlSelectQueryBlock)query;
+                    if (mySqlSelectQueryBlock.getLimit() == null){
+                        MySqlSelectQueryBlock.Limit limit = new MySqlSelectQueryBlock.Limit();
+                        SQLIntegerExpr sqlIntegerExpr = new SQLIntegerExpr();
+                        sqlIntegerExpr.setNumber(100);
+
+                        limit.setRowCount(sqlIntegerExpr);
+                        mySqlSelectQueryBlock.setLimit(limit);
+                    }
+                    sql = stmt.toString();
+                }
+            }
             DataResult dataResult = execute(host, port, username, password, dbName, sql);
             if (!dataResult.isSuccess()) {
                 return dataResult;
@@ -195,9 +227,9 @@ public abstract class AbstractDbManager {
                                 data[row][i] = o;
                             }
                             tableName = metaData.getTableName(i + 1);
-                            if (log.isInfoEnabled()) {
-                                log.info(tableName);
-                            }
+//                            if (log.isInfoEnabled()) {
+//                                log.info(tableName);
+//                            }
                         }
                         row++;
                     } while (resultSet.next());

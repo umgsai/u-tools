@@ -52,16 +52,44 @@
 <script src="/static/jsonview/jquery.jsonview.min.js"></script>
 <script type="text/javascript">
     $(function () {
-        let input = {};
+        let newInput = new Array();
         try {
+            let input = {};
             input = JSON.stringify(parent.layer.jsonData);
             input = eval('(' + input + ')');
             // input = parent.layer.jsonData;
-        }
-        catch (error) {
+            if (input && input.length > 0) {
+                let rowData = input[0];
+                let keyList = new Array()
+                for (let key in rowData) {
+                    keyList.push(key);
+                }
+
+                $.ajax({
+                    type: "post",
+                    url: "/format/toCamelFormat",
+                    contentType: "application/json",
+                    data: JSON.stringify(keyList),
+                    async: false,
+                    success: function (dataResult) {
+                        console.log(dataResult);
+
+                        for(let i = 0; i<input.length;i++){
+                            let rowTmp = input[i];
+                            let newRow = {};
+
+                            for (let key in rowTmp) {
+                                newRow[dataResult[key]] = rowTmp[key];
+                            }
+                            newInput.push(newRow);
+                        }
+                    }
+                })
+            }
+        } catch (error) {
             return alert("Cannot eval JSON: " + error);
         }
-        jQuery("#json-content").text(JSON.stringify(input, null, 4));
+        jQuery("#json-content").text(JSON.stringify(newInput, null, 4));
         let options = {
             collapsed: false,
             withQuotes: true
@@ -71,7 +99,7 @@
         // $("#json-render").JSONView(input);
 
 
-        $("#json-render").JSONView(input, {
+        $("#json-render").JSONView(newInput, {
             collapsed: false,
             escape: false,
             nl2br: true,
@@ -79,7 +107,7 @@
         });
 
         $('#collapse-btn').on('click', function () {
-            $("#json-render").JSONView(input, {
+            $("#json-render").JSONView(newInput, {
                 collapsed: true,
                 nl2br: true,
                 recursive_collapser: true
@@ -89,7 +117,7 @@
         });
 
         $('#expand-btn').on('click', function () {
-            $("#json-render").JSONView(input, {
+            $("#json-render").JSONView(newInput, {
                 collapsed: false,
                 nl2br: true,
                 recursive_collapser: true
