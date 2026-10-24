@@ -4,6 +4,7 @@
  */
 package com.umgsai.utools.dbTools;
 
+import com.alibaba.druid.sql.ast.SQLLimit;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLIntegerExpr;
 import com.alibaba.druid.sql.ast.statement.SQLSelect;
@@ -14,8 +15,6 @@ import com.alibaba.druid.sql.dialect.mysql.parser.MySqlStatementParser;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlOutputVisitor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.PreparedStatement;
 import com.umgsai.utools.data.DataResult;
 import com.umgsai.utools.data.ErrorCode;
 import com.umgsai.utools.data.SqlType;
@@ -25,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -176,7 +177,7 @@ public abstract class AbstractDbManager {
                     SQLSelectQuery query = select.getQuery();
                     MySqlSelectQueryBlock mySqlSelectQueryBlock = (MySqlSelectQueryBlock)query;
                     if (mySqlSelectQueryBlock.getLimit() == null){
-                        MySqlSelectQueryBlock.Limit limit = new MySqlSelectQueryBlock.Limit();
+                        SQLLimit limit = new SQLLimit();
                         SQLIntegerExpr sqlIntegerExpr = new SQLIntegerExpr();
                         sqlIntegerExpr.setNumber(100);
 

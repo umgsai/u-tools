@@ -8,7 +8,7 @@ import com.google.common.base.CaseFormat;
 import com.umgsai.utools.config.ConfigData;
 import com.umgsai.utools.data.JavaClass;
 import com.umgsai.utools.data.TableColumn;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *

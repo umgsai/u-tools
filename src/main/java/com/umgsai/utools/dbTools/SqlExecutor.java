@@ -4,8 +4,9 @@
  */
 package com.umgsai.utools.dbTools;
 
-import com.mysql.jdbc.PreparedStatement;
 import com.umgsai.utools.data.DataResult;
+
+import java.sql.PreparedStatement;
 
 /**
  *

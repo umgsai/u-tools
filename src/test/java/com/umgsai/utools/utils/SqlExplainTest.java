@@ -1,6 +1,7 @@
 package com.umgsai.utools.utils;
 
 import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLLimit;
 import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.ast.expr.SQLIntegerExpr;
 import com.alibaba.druid.sql.ast.statement.SQLSelect;
@@ -32,7 +33,7 @@ public class SqlExplainTest {
             SQLSelectQuery query = select.getQuery();
             MySqlSelectQueryBlock mySqlSelectQueryBlock = (MySqlSelectQueryBlock)query;
             if (mySqlSelectQueryBlock.getLimit() == null){
-                MySqlSelectQueryBlock.Limit limit = new MySqlSelectQueryBlock.Limit();
+                SQLLimit limit = new SQLLimit();
                 SQLIntegerExpr sqlIntegerExpr = new SQLIntegerExpr();
                 sqlIntegerExpr.setNumber(100);
 

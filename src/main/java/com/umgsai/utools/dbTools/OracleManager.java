@@ -4,8 +4,9 @@
  */
 package com.umgsai.utools.dbTools;
 
-import com.mysql.jdbc.Connection;
 import com.umgsai.utools.data.DataResult;
+
+import java.sql.Connection;
 
 /**
  *

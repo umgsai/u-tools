@@ -4,11 +4,12 @@
  */
 package com.umgsai.utools.dbTools;
 
-import com.mysql.jdbc.PreparedStatement;
 import com.umgsai.utools.data.DataResult;
 import com.umgsai.utools.data.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.sql.PreparedStatement;
 
 /**
  *

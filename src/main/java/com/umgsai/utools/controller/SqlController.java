@@ -4,8 +4,6 @@
  */
 package com.umgsai.utools.controller;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.umgsai.utools.data.DataResult;
 import com.umgsai.utools.data.DbForm;
 import com.umgsai.utools.data.ServerType;
@@ -20,8 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -41,13 +38,10 @@ public class SqlController {
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index(Model model) {
         ServerType[] serverTypes = ServerType.values();
-        List<String> serverTypeList = Lists.transform(Arrays.asList(serverTypes), new Function<ServerType, String>() {
-            @Nullable
-            @Override
-            public String apply(@Nullable ServerType serverType) {
-                return serverType.name();
-            }
-        });
+        List<String> serverTypeList = new ArrayList<>();
+        for (ServerType serverType : serverTypes) {
+            serverTypeList.add(serverType.name());
+        }
         model.addAttribute("serverTypeList", serverTypeList);
         return "db";
     }

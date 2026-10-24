@@ -4,11 +4,11 @@
  */
 package com.umgsai.utools.dbTools;
 
-import com.mysql.jdbc.Connection;
 import com.umgsai.utools.data.DataResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 
 /**
@@ -20,7 +20,7 @@ import java.sql.DriverManager;
 @Component
 public class MySqlManager extends AbstractDbManager {
 
-    private static final String driverClass = "com.mysql.jdbc.Driver";
+    private static final String driverClass = "com.mysql.cj.jdbc.Driver";
 
     @Override
     public DataResult<Connection> getConnection(String host, int port, String username, String password, String dbName) {
@@ -29,7 +29,7 @@ public class MySqlManager extends AbstractDbManager {
         Connection connection = null;
         try {
             Class.forName(driver);
-            connection = (Connection) DriverManager.getConnection(url, username, password);
+            connection = DriverManager.getConnection(url, username, password);
         } catch (Exception e) {
             String errorMsg = String.format("建立数据库连接失败！%s", e.getMessage());
             log.error(errorMsg, e);
